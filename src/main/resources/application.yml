@@ -1,0 +1,7 @@
+spring:
+  redis:
+    password: ENC(3C1bQee1GEYrBXU8eLQz45rY+o6cstxzH6zzSfmgqhYYzEnJoqSiQwjPcO3tkLNr)
+
+jasypt:
+    encryptor:
+        password: ${JASYPT_ENCRYPTOR_PASSWORD:}
