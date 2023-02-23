@@ -43,6 +43,4 @@ public class Pessoa implements Serializable {
 	@Min(value = 18, message = "Idade não pode ser menor que 18 anos")
 	int idade;
 
-	String errMsg;
-
 }

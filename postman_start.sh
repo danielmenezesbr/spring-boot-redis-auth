@@ -1,2 +1,2 @@
 #!/bin/sh
-newman run SPRING-REDIS.postman_collection.json
+newman run SPRING-REDIS.postman_collection.json --verbose

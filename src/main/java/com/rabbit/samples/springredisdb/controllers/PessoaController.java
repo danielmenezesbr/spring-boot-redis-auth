@@ -9,7 +9,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.util.StringUtils;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,7 +21,10 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+
 import java.util.List;
+import java.util.Optional;
 
 
 @Slf4j
@@ -43,26 +46,21 @@ public class PessoaController {
 	}
 
 	@GetMapping("/{id}")
-	public Pessoa getById(@PathVariable final String id) {
-
-		if (!StringUtils.hasLength(id)) {
-			log.error("Get Pessoa by id: ID vazio!");
-			return Pessoa.builder().errMsg("ID não pode ser vazio").build();
-		}
-
+	public ResponseEntity<Pessoa> getById(@PathVariable @NotBlank final String id) {
 		log.info("Get Pessoa by id {}...", id);
 
-		return getPessoaRepository().findById(id).get();
+		Optional<Pessoa> pessoa = getPessoaRepository().findById(id);
+
+		if (pessoa.isEmpty()) {
+            return new ResponseEntity<Pessoa>(HttpStatus.NOT_FOUND);
+        }
+
+		return new ResponseEntity<Pessoa>(pessoa.get(), HttpStatus.OK);
 	}
 
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
 	public Pessoa insert(@RequestBody @Valid final Pessoa pessoa) {
-
-		if (pessoa == null) {
-			log.error("Insert Pessoa: Objeto não pode ser null!");
-			return Pessoa.builder().errMsg("Objeto não pode ser null").build();
-		}
 
 		log.info("Insert Pessoa {}...", pessoa);
 
@@ -73,22 +71,13 @@ public class PessoaController {
 	@ResponseStatus(HttpStatus.ACCEPTED)
 	public Pessoa update(@RequestBody @Valid final Pessoa pessoa) {
 
-		if (pessoa == null) {
-			log.error("Update Pessoa: Objeto não pode ser null!");
-			return Pessoa.builder().errMsg("Objeto não pode ser null").build();
-		}
-
 		log.info("Update Pessoa {}...", pessoa);
 
 		return getPessoaRepository().save(pessoa);
 	}
 
 	@DeleteMapping("/{id}")
-	public void delete(@PathVariable final String id) {
-
-		if (!StringUtils.hasLength(id)) {
-			log.error("Delete Pessoa by id: ID vazio");
-		}
+	public void delete(@PathVariable @NotBlank final String id) {
 
 		log.info("Delete Pessoa by id {}...", id);
 
